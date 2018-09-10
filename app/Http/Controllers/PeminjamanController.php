@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Peminjaman;
+use DB;
 use App\Alat;
 use Illuminate\Http\Request;
 
@@ -16,8 +17,9 @@ class PeminjamanController extends Controller
     public function index()
     {
         //
-        return view('index');
+        $alat = Alat::where('peminjaman', 'Dipinjamkan')->get();
         
+        return view('index',compact('alat'));
     }
 
     /**
@@ -34,28 +36,26 @@ class PeminjamanController extends Controller
         
     }
 
-     /**
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function add(Request $request)
+    public function kembali(Request $request, $id)
     {
-        //
-        $nama = $request->nama;
-        $stok = $request->stok;
-        $biaya = $request->biaya;
-        
-        $alat = new \App\Alat;
-        $alat->nama = $nama;
-        $alat->stok = $stok;
-        // $alat->biaya = $biaya;
+        //Apabila Alat Sudah Dikembalikan
+        $peminjaman = Peminjaman::where('id', $id)->first();
+        $peminjaman->kembali = 1;
+        $id_alat = $peminjaman->alat_id;
+        $peminjaman->save();
+
+        $alat = Alat::where('id', $id_alat)->first();
+        //Mengembalikan Stok
+        $alat->stok = $alat->stok + $request->jumlah;
         $alat->save();
 
-        return redirect()->action('PeminjamanController@alat');
-        
+        return redirect()->back();
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -81,11 +81,20 @@ class PeminjamanController extends Controller
         $email = $request->email;
         $hp = $request->hp;
         $ukm = $request->ukm;
-        $alat = $request->alat;
         $tanggalkembali = $request->tanggal;
         $jumlah = $request->jumlah;
         $biaya = $request->biaya;
+        $staff = $request->staff;
+
+        $data = explode("|" , $request->alat);
+        $idalat = $data[0];
         
+        $alat = Alat::where('id', $idalat)->first();
+        $stok = $alat->stok;
+        
+        $alat->stok = $stok - $jumlah;
+        $alat->save();
+
         if(is_null($email)){
             $email = "-";
         }
@@ -96,10 +105,12 @@ class PeminjamanController extends Controller
         $peminjaman->email = $email;
         $peminjaman->hp = $hp;
         $peminjaman->ukm = $ukm;
-        $peminjaman->alat = $alat;
+        $peminjaman->alat_id = $alat->id;
         $peminjaman->tanggalkembali = $tanggalkembali;
         $peminjaman->jumlah = $jumlah;
         $peminjaman->biaya = $biaya;
+        $peminjaman->staff = $staff;
+        $peminjaman->kembali = 0;
         $peminjaman->save();
         
         return redirect()->action('PeminjamanController@index');
@@ -112,12 +123,16 @@ class PeminjamanController extends Controller
      * @param  \App\Peminjaman  $peminjaman
      * @return \Illuminate\Http\Response
      */
-    public function show(Peminjaman $peminjaman)
+    public function show(Alat $alat)
     {
-        //
-        $peminjaman = Peminjaman::all();       
-        // $peminjaman = Peminjaman::orderBy('created_at','desc')->paginate(5);       
-        return view('lihat',compact('peminjaman'));
+        //Join Table
+        $peminjaman = DB::table('peminjamen')
+        ->select('peminjamen.id','peminjamen.nama','namaktm','hp','ukm','alats.nama as alat','tanggalkembali','jumlah','peminjamen.biaya','staff',
+        'kembali','peminjamen.created_at')
+        ->join('alats', 'alats.id', '=', 'peminjamen.alat_id')
+        ->get();
+        
+        return view('lihat',compact('alat'),compact('peminjaman'));
     }
 
     /**

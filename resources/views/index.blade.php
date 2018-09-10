@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.template')
 
 @section('head')
 
    <!-- Custom styles for this template -->
-   <link href="{{asset('/cssform-validation.css')}}" rel="stylesheet">
+   <link href="{{asset('/css/form-validation.css')}}" rel="stylesheet">
 
 @endsection
 @section('index')
@@ -24,6 +24,7 @@
           
           
         </ul>
+        
         <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -47,7 +48,7 @@
       <div class="row">
         <div class="col-md-4 order-md-2 mb-4">
           <h4 class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted">Stok barang</span>
+            <span class="text-muted">Total Peminjaman</span>
             <span class="badge badge-secondary badge-pill">13</span>
           </h4>
           <ul class="list-group mb-3">
@@ -101,7 +102,7 @@
         <div class="col-md-8 order-md-1">
           
           <h4 class="mb-3">Input Data</h4>
-          <form action="/peminjaman" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+          <form action="/peminjaman" method="post" enctype="multipart/form-data" class="needs-validation" id="frm" novalidate>
           {{ csrf_field() }}
           <div class="row">
               <div class="col-md-6 mb-3">
@@ -132,7 +133,7 @@
 
             <div class="mb-3">
               <label for="hp">No.HP</label>
-              <input type="number" class="form-control" id="hp" name="hp" placeholder="+628" required>
+              <input type="number" class="form-control" id="hp" name="hp" min="0" placeholder="0896" required>
               <div class="invalid-feedback">
                 Please enter your Phone number.
               </div>
@@ -168,14 +169,18 @@
                   Please select a valid Organization.
                 </div>
               </div>
-          
+
 
             <div class="row">
               <div class="col-md-5 mb-3">
                 <label for="country">Jenis Alat</label>
-                <select class="custom-select d-block w-100" id="alat" name="alat" required>
-                  <option value="">Pilih Alat...</option>
-                  <option>United States</option>
+                <select onchange="myFunction(this.value)" class="custom-select d-block w-100" id="alat" name="alat" required>
+                <option value="">Pilih Alat...</option>
+                @foreach($alat as $data)
+                  
+                  <option value="{{$data->id}}|{{$data->biaya}}|{{$data->stok}}">{{$data->nama}}</option>
+
+                @endforeach
                 </select>
                 <div class="invalid-feedback">
                   Please select a valid item.
@@ -190,19 +195,37 @@
               </div>
               <div class="col-md-3 mb-3">
                 <label for="zip">Jumlah</label>
-                <input type="text" class="form-control" id="jumlah" name="jumlah" placeholder="" required>
+                <input type="number" class="form-control" id="jumlah" name="jumlah" min="0" placeholder="" required >
                 <div class="invalid-feedback">
                   Qty is required.
                 </div>
               </div>
             </div>
+
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="cc-name">Stok Tersedia</label>
+                <input type="text" class="form-control" name="stok" id="stok" placeholder="" value="-" readonly>
+                <div class="invalid-feedback">
+                  Dont Override Stok Max Value
+                </div>
+              </div>
+              <div class="col-md-7 mb-3">
+              <label for="email">Nama Staff</label>
+              <input type="text" class="form-control" id="staff" name="staff" required>
+              <div class="invalid-feedback">
+                Please enter a valid staff name for shipping updates.
+              </div>
+              </div>
+            </div>
+            
             <hr class="mb-4">
 
             <h4 class="mb-3">Biaya</h4>
             <div class="row">
               <div class="col-md-3 mb-3">
                 <label for="cc-expiration">Total Biaya</label>
-                <input type="text" name="biaya" class="form-control" id="cc-expiration" value="2500" placeholder="" readonly>
+                <input type="text" name="biaya" class="form-control" id="biaya" value="-" placeholder="" readonly>
                 <div class="invalid-feedback">
                   Expiration date required
                 </div>
@@ -210,7 +233,7 @@
               
             </div>
             <hr class="mb-4">
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+            <button id="btn" class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
           </form>
         </div>
       </div>
@@ -228,11 +251,12 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{('/js/jquery-3.3.1.min.js')}}"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="{{asset('/js/popper.min.js')}}"></script>
     <script src="{{asset('/js/bootstrap.min.js')}}"></script>
-    <script src="{{asset('/js/vendor/holder.min.js')}}"></script>
+    <script src="{{asset('/js/holder.min.js')}}"></script>
 
     
     <!-- DatePicker -->
@@ -240,6 +264,18 @@
     <script type="text/javascript" src="{{asset('/datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 
     <script>
+    function myFunction(val) {
+        
+        var explode = val.split('|');
+
+        document.getElementById('biaya').value=explode[1] ; 
+        document.getElementById('stok').value=explode[2] ; 
+
+    }
+    </script>
+
+    <script>
+    
 
      $(document).ready(function () {
                 $('.tanggal').datepicker({
@@ -250,6 +286,26 @@
 
     // $('.datepicker').datepicker();
 
+    </script>
+
+    <script>
+        $("#btn").on("click", function(){
+
+          //add
+          var stok = document.getElementById("stok").value;
+          var jumlah = document.getElementById("jumlah").value;
+
+          if(stok < jumlah){
+              // Ketika jumlah melebihi stok
+              $('#stok').addClass('is-invalid');
+              $('#frm').addClass('was-validated');
+              event.preventDefault();
+              event.stopPropagation();
+            
+          }else{
+              $('#stok').removeClass('is-invalid');
+          }
+        });
     </script>
 
 
@@ -265,6 +321,7 @@
           // Loop over them and prevent submission
           var validation = Array.prototype.filter.call(forms, function(form) {
             form.addEventListener('submit', function(event) {
+
               if (form.checkValidity() === false) {
                 event.preventDefault();
                 event.stopPropagation();

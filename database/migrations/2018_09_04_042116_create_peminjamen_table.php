@@ -20,10 +20,12 @@ class CreatePeminjamenTable extends Migration
             $table->string('email')->nullable();
             $table->string('hp');
             $table->string('ukm');
-            $table->string('alat');
+            $table->integer('alat_id')->unsigned();
             $table->string('tanggalkembali');
             $table->string('jumlah');
             $table->string('biaya');
+            $table->string('staff');
+            $table->boolean('kembali');
             $table->timestamps();
         });
     }

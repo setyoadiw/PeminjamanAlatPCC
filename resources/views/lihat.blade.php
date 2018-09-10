@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.template')
 
 @section('head')
 
@@ -24,13 +24,33 @@
           <li class="nav-item active">
             <a class="nav-link" href="lihatpeminjaman">Lihat Peminjaman<span class="sr-only">(current)</span></a>
           </li>
-          
-          
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+
+        @guest
+        <div class="navbar-nav form-inline nav-item my-2 my-lg-0">
+          <li><a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a></li>
+          <li><a class="nav-link disabled" >{{ __('Register') }}</a></li>
+          
+        </div>
+        @else
+          <li class="navbar-nav form-inline nav-item dropdown my-2 my-lg-0">
+              <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                  {{ Auth::user()->name }} <span class="caret"></span>
+              </a>
+
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{{ route('logout') }}"
+                      onclick="event.preventDefault();
+                                    document.getElementById('logout-form').submit();">
+                      {{ __('Logout') }}
+                  </a>
+
+                  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                      @csrf
+                  </form>
+              </div>
+          </li>
+        @endguest
       </div>
     </nav>
     <br/>
@@ -51,34 +71,11 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="dataalat">
-                  <span data-feather="file"></span>
+                  <span data-feather="bar-chart-2"></span>
                   Data Alat
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="shopping-cart"></span>
-                  Products
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="users"></span>
-                  Customers
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="bar-chart-2"></span>
-                  Reports
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="layers"></span>
-                  Integrations
-                </a>
-              </li>
+              
             </ul>
 
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -94,24 +91,7 @@
                   Current month
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Last quarter
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Social engagement
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Year-end sale
-                </a>
-              </li>
+              
             </ul>
           </div>
         </nav>
@@ -121,7 +101,7 @@
             <h1 class="h2">Daftar Peminjaman</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
               <div class="btn-group mr-2">
-                <button class="btn btn-sm btn-outline-secondary">Share</button>
+              
                 <button class="btn btn-sm btn-outline-secondary">Export</button>
               </div>
               <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
@@ -131,9 +111,6 @@
             </div>
           </div>
 
-          
-
-          
           <div class="table-responsive">
           <table id="table_id" class="display" style="text-align:center;">
             <thead>
@@ -142,13 +119,14 @@
                     <th>Nama Lengkap</th>
                     <th>Nama KTM</th>
                     <th>No HP</th>
-                    <th>Email</th>
                     <th>Nama UKM</th>
                     <th>Jenis Alat</th>
                     <th>Tanggal Kembali</th>
                     <th>Jumlah</th>
                     <th>Biaya</th>
+                    <th>Staff</th>
                     <th>Waktu Pinjam</th>
+                    <th>Alat Kembali</th>
                 </tr>
             </thead>
             <tbody>
@@ -160,13 +138,29 @@
                     <td>{{$data->nama}}</td>
                     <td>{{$data->namaktm}}</td>
                     <td>{{$data->hp}}</td>
-                    <td>{{$data->email}}</td>
                     <td>{{$data->ukm}}</td>
                     <td>{{$data->alat}}</td>
                     <td>{{$data->tanggalkembali}}</td>
                     <td>{{$data->jumlah}}</td>
                     <td>{{$data->biaya}}</td>
+                    <td>{{$data->staff}}</td>
                     <td>{{$data->created_at}}</td>
+                    <td>
+                    @if ($data->kembali == 0) 
+                    <button onclick="@if (Auth::guest())
+                            window.location='{{ url("/login") }}'
+                            @else   
+                        @endif" rel="tooltip" data-toggle="modal" data-id="{{$data->id}}" data-jumlah="{{$data->jumlah}}" data-alat="{{$data->alat}}" data-target="#myModal" title="Klik Apabila Sudah Dikembalikan" type="button" class="btn btn-sm btn-outline-danger" style="border-radius: 4px;">
+                        <span data-feather="x-circle"></span>
+                        Belum
+                    </button>
+                    @else
+                    <button type="button" class="btn btn-sm btn-outline-success" style="border-radius: 4px;" disabled>
+                        <span data-feather="check-circle"></span>
+                        Kembali
+                    </button>
+                    @endif
+                    </td>
                 </tr>
 
                 @endforeach
@@ -178,6 +172,39 @@
       </div>
     </div>
 
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                <div class="modal-header">
+                <h4 class="modal-title">Konfirmasi Pengembalian Alat</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+                    <form action=get_action() id="myFormId" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {{ csrf_field() }}
+                    
+                    <p>Jumlah stok alat akan dikembalikan. Pastikan kembali alat dan jumlah sudah sesuai dengan yang dipinjamkan .</p>
+                    <div class="container">
+                    <p id="alat"></p>
+                    
+                    </div>
+                    <input type="hidden" id="id" value="" name="id">
+                    <input type="hidden" id="jumlah" value="" name="jumlah">
+                    <p class="text-muted"><span data-feather="alert-triangle"></span> Aksi ini tidak dapat diulangi</p>
+                    
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Konfirmasi</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+            </div>
+
     <script type="text/javascript" src="{{asset('DataTables/datatables.min.js')}}"></script>
     <script>
         $('#table_id').DataTable( {
@@ -187,6 +214,37 @@
 
         } );
     </script>
+    <script>
+        $(document).ready(function(){
+            $('[rel='tooltip']').tooltip();   
+        });
+    </script>
+    <script>
+      $(document).ready(function() {
+
+        $('button[data-toggle = modal]').click(function () {
+
+          var data_id = '';
+          var data_jumlah = '';
+          var data_alat = '';
+
+          if (typeof $(this).data('id') !== 'undefined') {
+
+            data_id = $(this).data('id');
+            data_jumlah = $(this).data('jumlah');
+            data_alat = $(this).data('alat');
+          }
+
+          document.getElementById('id').value= data_id ; 
+          document.getElementById('jumlah').value= data_jumlah ; 
+          document.getElementById('alat').innerHTML=data_alat +" x "+data_jumlah; 
+
+          $('#myFormId').attr('action', '/lihatpeminjaman/'+data_id+"/kembali");
+
+        })
+      });
+    </script>
+    
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

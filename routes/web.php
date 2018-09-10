@@ -11,6 +11,10 @@
 |
 */
 
+Auth::routes();
+
+
+
 Route::get('/', function () {
     return redirect()->action(
         'PeminjamanController@index'
@@ -20,8 +24,25 @@ Route::get('/', function () {
 
 Route::get('/lihatpeminjaman','PeminjamanController@show');
 Route::get('/dataalat','PeminjamanController@alat');
-Route::post('/dataalat/add','PeminjamanController@add');
+
+Route::post('/lihatpeminjaman/{id}/kembali','PeminjamanController@kembali');
+Route::resource('/dataalat', 'DataAlatController')->only([
+    'update', 'destroy'
+]);
+Route::post('/dataalat/add','DataAlatController@store');
+
+
+// Route::post('/dataalat/add','PeminjamanController@add');
 
 Route::resource('/peminjaman','PeminjamanController');
 
 
+
+
+
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

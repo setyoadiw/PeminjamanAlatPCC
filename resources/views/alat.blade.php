@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.template')
 
 @section('head')
 
@@ -10,7 +10,7 @@
 @endsection
 
 @section('index')
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
       <a class="navbar-brand mr-auto mr-lg-0" href="#">PCC</a>
       <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
         <span class="navbar-toggler-icon"></span>
@@ -24,13 +24,32 @@
           <li class="nav-item active">
             <a class="nav-link" href="lihatpeminjaman">Lihat Peminjaman<span class="sr-only">(current)</span></a>
           </li>
-          
-          
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+
+        @guest
+        <div class="navbar-nav form-inline nav-item my-2 my-lg-0">
+          <li><a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a></li>
+          <li><a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a></li>
+        </div>
+        @else
+          <li class="navbar-nav form-inline nav-item dropdown my-2 my-lg-0">
+              <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                  {{ Auth::user()->name }} <span class="caret"></span>
+              </a>
+
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{{ route('logout') }}"
+                      onclick="event.preventDefault();
+                                    document.getElementById('logout-form').submit();">
+                      {{ __('Logout') }}
+                  </a>
+
+                  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                      @csrf
+                  </form>
+              </div>
+          </li>
+        @endguest
       </div>
     </nav>
     <br/>
@@ -51,34 +70,11 @@
               </li>
               <li class="nav-item " >
                 <a class="nav-link active" href="dataalat">
-                  <span data-feather="file"></span>
+                  <span data-feather="bar-chart-2"></span>
                   Data Alat<span class="sr-only">(current)</span>
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="shopping-cart"></span>
-                  Products
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="users"></span>
-                  Customers
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="bar-chart-2"></span>
-                  Reports
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="layers"></span>
-                  Integrations
-                </a>
-              </li>
+             
             </ul>
 
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -94,33 +90,24 @@
                   Current month
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Last quarter
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Social engagement
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Year-end sale
-                </a>
-              </li>
+              
             </ul>
           </div>
         </nav>
 
+        
+        
+
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Daftar Alat</h1>
+            <h1 class="h2">Inventaris</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
-              <button data-toggle="modal" data-target="#myModal" type="button" class="btn btn-sm btn-outline-primary ">
+              <button onclick="@if (Auth::guest())
+                    
+                     window.location='{{ url("/login") }}'
+                     @else
+                     
+                @endif" data-toggle="modal" data-target="#myModal" type="button" class="btn btn-sm btn-outline-primary ">
                 <span data-feather="folder-plus"></span>
                 Tambah Alat
               </button>
@@ -130,11 +117,12 @@
             <!-- Modal -->
             <div id="myModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
-
                 <!-- Modal content-->
                 <div class="modal-content">
                 <div class="modal-header">
+                <h4 class="modal-title">Tambah Alat</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+
                 </div>
                 <div class="modal-body">
                     <form action="/dataalat/add" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
@@ -151,10 +139,27 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-5 mb-3">
+                        <div class="col-md-6 mb-3">
                         <label for="cc-name">Biaya</label>
-                        <input type="text" class="form-control" name="biaya" placeholder="" required>
+                        <input type="number" class="form-control" name="biaya" placeholder="" required>
                     </div>
+                      <div class=" col-md-4 mb-3">
+                        <label for="country">Peminjaman</label>
+                        <select name="peminjaman" class="custom-select d-block w-100" required>
+                          <option value="">Pilih...</option>
+                          <option>Dipinjamkan</option>
+                          <option>Tidak Dipinjamkan</option>
+                          
+                        </select>
+                        
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Keterangan<span class="text-muted">(Opsional)</span></label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" name="ket" rows="3"></textarea>
+                      </div>
+
                     </div>
                     <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
                     </form>
@@ -163,17 +168,78 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
                 </div>
+            </div>
+            </div>
 
+             <!-- Modal Edot-->
+            <div id="myModalEdit" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                <div class="modal-header">
+                <h4 class="modal-title">Edit Alat</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+                    <form action="/dataalat/add" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                        <label for="cc-name">Nama Barang</label>
+                        <input type="text" class="form-control" name="nama" placeholder="" required>
+
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="cc-number">Stok</label>
+                        <input type="text" class="form-control" name="stok" placeholder="" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                        <label for="cc-name">Biaya</label>
+                        <input type="number" class="form-control" name="biaya" placeholder="" required>
+                    </div>
+                      <div class=" col-md-4 mb-3">
+                        <label for="country">Peminjaman</label>
+                        <select name="peminjaman" class="custom-select d-block w-100" required>
+                          <option value="">Pilih...</option>
+                          <option>Dipinjamkan</option>
+                          <option>Tidak Dipinjamkan</option>
+                          
+                        </select>
+                        
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Keterangan<span class="text-muted">(Opsional)</span></label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" name="ket" rows="3"></textarea>
+                      </div>
+
+                    </div>
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+                </div>
             </div>
             </div>
-          
+
           <div class="table">
           <table id="table_id" class="display" style="text-align:center;">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Nama Alat</th>
+                    <th>Kategori</th>
+                    <th>No Inventaris</th>
                     <th>Stok</th>
+                    <th>Biaya</th>
+                    <th>Peminjaman</th>
+                    <th>Ket</th>
                     <th>Edit</th>                    
                 </tr>
             </thead>
@@ -184,15 +250,34 @@
                 <tr>
                     <td>{{$data->id}}</td>
                     <td>{{$data->nama}}</td>
+                    <td>{{$data->kategori}}</td>
+                    <td>{{$data->noinventaris}}</td>
                     <td>{{$data->stok}}</td>
-                    <td><button class="btn btn-sm btn-outline-secondary">
-                        <span data-feather="edit"></span>
-                            Edit
+                    <td>{{$data->biaya}}</td>
+                    <td>{{$data->peminjaman}}</td>
+                    <td>{{$data->ket}}</td>
+                    <td>
+
+                        <form action="./dataalat/{{$data->id}}" method="post">
+                        {{ csrf_field() }}
+                        {{ method_field('delete') }}
+
+                        <button onclick="@if (Auth::guest())
+                    
+                          window.location='{{ url("/login") }}'
+                          @else
+                                      
+                          @endif" data-toggle="modal" data-target="#myModalEdit" type="button" class="btn btn-sm btn-outline-secondary ">
+                          <span data-feather="edit"></span>
+                          Edit
                         </button>
-                        <button class="btn btn-sm btn-outline-danger">
+                        
+                        
+                        <button type="submit" class="btn btn-sm btn-outline-danger" @if (Auth::guest()) disabled @else @endif >
                         <span data-feather="delete"></span>
                             Delete
                         </button>
+                        </form>
                     </td>
                 </tr>
 
@@ -230,6 +315,29 @@
     <script src="{{asset('js/feather.min.js')}}"></script>
     <script>
       feather.replace()
+    </script>
+
+    <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function() {
+        'use strict';
+
+        window.addEventListener('load', function() {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.getElementsByClassName('needs-validation');
+
+          // Loop over them and prevent submission
+          var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+              if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
+        }, false);
+      })();
     </script>
     
 

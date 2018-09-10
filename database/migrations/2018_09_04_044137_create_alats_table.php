@@ -16,6 +16,11 @@ class CreateAlatsTable extends Migration
         Schema::create('alats', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nama');
+            $table->string('kategori');
+            $table->string('noinventaris');
+            $table->integer('biaya');
+            $table->string('peminjaman');
+            $table->string('ket')->nullable();
             $table->integer('stok');
             $table->timestamps();
         });
