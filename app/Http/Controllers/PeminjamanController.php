@@ -18,8 +18,18 @@ class PeminjamanController extends Controller
     {
         //
         $alat = Alat::where('peminjaman', 'Dipinjamkan')->get();
-        
-        return view('index',compact('alat'));
+
+        $peminjaman = DB::table('peminjamen')
+        ->select('peminjamen.id','peminjamen.nama','namaktm','hp','ukm','alats.nama as alat','tanggalkembali','jumlah','peminjamen.biaya','staff',
+        'kembali','peminjamen.created_at')
+        ->join('alats', 'alats.id', '=', 'peminjamen.alat_id')
+        ->orderBy('created_at', 'desc')
+        ->take(4)
+        ->get();
+
+        $count = DB::table('peminjamen')->count();
+
+        return view('index',compact('alat'),compact('peminjaman'))->with('count',$count);;
     }
 
     /**
