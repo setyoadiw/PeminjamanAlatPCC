@@ -10,13 +10,13 @@
 @endsection
 
 @section('index')
-<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-pcc">
       <a class="navbar-brand mr-auto mr-lg-0" href="#">PCC</a>
-      <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+      <button class="navbar-toggler p-0 border-0" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+      <div class="collapse navbar-collapse offcanvas-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item ">
             <a class="nav-link" href="/">Peminjaman</a>
@@ -29,7 +29,8 @@
         @guest
         <div class="navbar-nav form-inline nav-item my-2 my-lg-0">
           <li><a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a></li>
-          <li><a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a></li>
+          <li><a class="nav-link disabled" >{{ __('Register') }}</a></li>
+
         </div>
         @else
           <li class="navbar-nav form-inline nav-item dropdown my-2 my-lg-0">
@@ -108,7 +109,7 @@
                      @else
                      
                 @endif" data-toggle="modal" data-target="#myModal" type="button" class="btn btn-sm btn-outline-primary ">
-                <span data-feather="folder-plus"></span>
+                <span data-feather="file-plus"></span>
                 Tambah Alat
               </button>
             </div>
@@ -128,30 +129,46 @@
                     <form action="/dataalat/add" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {{ csrf_field() }}
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                        <label for="cc-name">Nama Barang</label>
-                        <input type="text" class="form-control" name="nama" placeholder="" required>
-
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="cc-number">Stok</label>
-                        <input type="text" class="form-control" name="stok" placeholder="" required>
+                        <div class="col-md-5 mb-3">
+                          <label for="cc-name">Nama Barang</label>
+                          <input type="text" class="form-control" name="nama" placeholder="" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label for="cc-number">Kategori</label>
+                          <select class="custom-select d-block w-100" id="kategori" name="kategori" required>
+                            <option value="">Pilih Kategori...</option>
+                            <option>Alat Elektronik</option>
+                            <option value="Dokumentasi dan Dekorasi">Dokumentasi dan Dekorasi</option>
+                            <option>Buku/Pustaka</option>
+                            <option value="Alat Tulis Kantor">Alat Tulis Kantor</option>
+                            <option value="Alat Kebersihan">Alat Kebersihan</option>
+                            <option value="Alat Ibadah">Alat Ibadah</option>
+                            <option value="Aset Tetap/Perlengkapan">Aset Tetap/Perlengkapan</option>
+                            <option value="Barang Maintenance">Barang Maintenance</option>
+                            <option value="Persediaan">Persediaan</option>
+                          </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          <label for="cc-number">Stok</label>
+                          <input type="number" class="form-control" name="stok" placeholder="" min="0" required>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                        <label for="cc-name">Biaya</label>
-                        <input type="number" class="form-control" name="biaya" placeholder="" required>
-                    </div>
+                      <div class="col-md-5 mb-3">
+                        <label for="cc-name">No.Inventaris</label>
+                        <input type="text" class="form-control" name="noinventaris" placeholder="PCC/01/01/01" required>
+                      </div>
                       <div class=" col-md-4 mb-3">
                         <label for="country">Peminjaman</label>
                         <select name="peminjaman" class="custom-select d-block w-100" required>
                           <option value="">Pilih...</option>
                           <option>Dipinjamkan</option>
                           <option>Tidak Dipinjamkan</option>
-                          
                         </select>
-                        
+                      </div>
+                      <div class="col-md-3 mb-3">
+                        <label for="cc-name">Biaya Pinjam</label>
+                        <input type="number" class="form-control" name="biaya" min="0" placeholder="" required>
                       </div>
                     </div>
                     <div class="mb-3">
@@ -171,7 +188,7 @@
             </div>
             </div>
 
-             <!-- Modal Edot-->
+            <!-- Modal Edit -->
             <div id="myModalEdit" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <!-- Modal content-->
@@ -182,43 +199,61 @@
 
                 </div>
                 <div class="modal-body">
-                    <form action="/dataalat/add" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <form id="myFormEdit" action="/dataalat/" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {{ csrf_field() }}
+                    {{ method_field('PUT') }}
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                        <label for="cc-name">Nama Barang</label>
-                        <input type="text" class="form-control" name="nama" placeholder="" required>
-
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="cc-number">Stok</label>
-                        <input type="text" class="form-control" name="stok" placeholder="" required>
+                        <div class="col-md-5 mb-3">
+                          <label for="cc-name">Nama Barang</label>
+                          <input type="text" class="form-control" name="nama" id="nama" placeholder="" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label for="cc-number">Kategori</label>
+                          <select class="custom-select d-block w-100" id="kategori" name="kategori" required>
+                            <option value="">Pilih Kategori...</option>
+                            <option>Alat Elektronik</option>
+                            <option value="Dokumentasi dan Dekorasi">Dokumentasi dan Dekorasi</option>
+                            <option>Buku/Pustaka</option>
+                            <option value="Alat Tulis Kantor">Alat Tulis Kantor</option>
+                            <option value="Alat Kebersihan">Alat Kebersihan</option>
+                            <option value="Alat Ibadah">Alat Ibadah</option>
+                            <option value="Aset Tetap/Perlengkapan">Aset Tetap/Perlengkapan</option>
+                            <option value="Barang Maintenance">Barang Maintenance</option>
+                            <option value="Persediaan">Persediaan</option>
+                          </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          <label for="cc-number">Stok</label>
+                          <input type="number" class="form-control" name="stok" id="stok" placeholder="" min="0" required>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                        <label for="cc-name">Biaya</label>
-                        <input type="number" class="form-control" name="biaya" placeholder="" required>
-                    </div>
+                      <div class="col-md-5 mb-3">
+                        <label for="cc-name">No.Inventaris</label>
+                        <input type="text" class="form-control" id="noinventaris" name="noinventaris" placeholder="PCC/01/01/01" required>
+                      </div>
                       <div class=" col-md-4 mb-3">
                         <label for="country">Peminjaman</label>
-                        <select name="peminjaman" class="custom-select d-block w-100" required>
+                        <select name="peminjaman" class="custom-select d-block w-100" id="peminjaman" required>
                           <option value="">Pilih...</option>
                           <option>Dipinjamkan</option>
                           <option>Tidak Dipinjamkan</option>
-                          
                         </select>
-                        
+                      </div>
+                      <div class="col-md-3 mb-3">
+                        <label for="cc-name">Biaya Pinjam</label>
+                        <input type="number" class="form-control" id="biaya" name="biaya" min="0" placeholder="" required>
                       </div>
                     </div>
                     <div class="mb-3">
                       <div class="form-group">
                         <label for="exampleFormControlTextarea1">Keterangan<span class="text-muted">(Opsional)</span></label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" name="ket" rows="3"></textarea>
+                        <textarea class="form-control" id="ket" name="ket" rows="3"></textarea>
                       </div>
-
                     </div>
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+                    <input type="hidden" id="id" value="" name="id">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Update</button>
+                    
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -266,8 +301,16 @@
                     
                           window.location='{{ url("/login") }}'
                           @else
-                                      
-                          @endif" data-toggle="modal" data-target="#myModalEdit" type="button" class="btn btn-sm btn-outline-secondary ">
+
+                          @endif" data-toggle="modal" data-target="#myModalEdit" 
+                          data-id="{{$data->id}}"
+                          data-nama="{{$data->nama}}" 
+                          data-noinventaris="{{$data->noinventaris}}"
+                          data-stok="{{$data->stok}}"
+                          data-biaya="{{$data->biaya}}"
+                          data-peminjaman="{{$data->peminjaman}}"
+                          data-ket="{{$data->ket}}"
+                          data-kategori="{{$data->kategori}}" type="button" id="edit" class="btn btn-sm btn-outline-secondary ">
                           <span data-feather="edit"></span>
                           Edit
                         </button>
@@ -315,6 +358,33 @@
     <script src="{{asset('js/feather.min.js')}}"></script>
     <script>
       feather.replace()
+    </script>
+
+    <script>
+      $(document).ready(function() {
+
+        $("#edit").click(function () {
+
+          var data_id = $(this).data('id');
+          var data_nama = $(this).data('nama');
+          var data_kategori = $(this).data('kategori');
+          var data_stok = $(this).data('stok');
+          var data_noinventaris = $(this).data('noinventaris');
+          var data_peminjaman = $(this).data('peminjaman');
+          var data_biaya = $(this).data('biaya');
+          var data_ket = $(this).data('ket');
+         
+          document.getElementById('id').value= data_id ; 
+          document.getElementById('nama').value= data_nama ; 
+          document.getElementById('stok').value= data_stok ; 
+          document.getElementById('noinventaris').value= data_noinventaris ; 
+          document.getElementById('biaya').value= data_biaya ; 
+          document.getElementById('ket').innerHTML=data_ket; 
+
+          $('#myFormEdit').attr('action', '/dataalat/'+data_id);
+
+        })
+      });
     </script>
 
     <script>

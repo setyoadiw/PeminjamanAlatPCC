@@ -46,6 +46,8 @@ class DataAlatController extends Controller
         //
          //
          $nama = $request->nama;
+         $kategori = $request->kategori;
+         $noinventaris = $request->noinventaris;
          $stok = $request->stok;
          $biaya = $request->biaya;
          $peminjaman = $request->peminjaman;
@@ -57,6 +59,8 @@ class DataAlatController extends Controller
          
          $alat = new \App\Alat;
          $alat->nama = $nama;
+         $alat->kategori = $kategori;
+         $alat->noinventaris = $noinventaris;
          $alat->stok = $stok;
          $alat->biaya = $biaya;
          $alat->peminjaman = $peminjaman;
@@ -98,6 +102,26 @@ class DataAlatController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $nama = $request->nama;
+        $kategori = $request->kategori;
+        $noinventaris = $request->noinventaris;
+        $stok = $request->stok;
+        $biaya = $request->biaya;
+        $peminjaman = $request->peminjaman;
+        $ket = $request->ket;
+
+        $alat = Alat::find($id);
+        $alat->nama = $nama;
+        $alat->kategori = $kategori;
+        $alat->noinventaris = $noinventaris;
+        $alat->stok = $stok;
+        $alat->biaya = $biaya;
+        $alat->peminjaman = $peminjaman;
+        $alat->ket = $ket;
+        $alat->save();
+ 
+        return redirect()->action('PeminjamanController@alat');
+
     }
 
     /**

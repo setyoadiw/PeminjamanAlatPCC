@@ -10,13 +10,13 @@
 @endsection
 
 @section('index')
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-pcc">
       <a class="navbar-brand mr-auto mr-lg-0" href="#">PCC</a>
-      <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+      <button class="navbar-toggler p-0 border-0" type="button"  data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+      <div class="collapse navbar-collapse offcanvas-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item ">
             <a class="nav-link" href="/">Peminjaman</a>
@@ -111,7 +111,7 @@
             </div>
           </div>
 
-          <div class="table-responsive">
+          <div class="table table-responsive">
           <table id="table_id" class="display" style="text-align:center;">
             <thead>
                 <tr>

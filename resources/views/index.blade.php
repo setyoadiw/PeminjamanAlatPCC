@@ -7,13 +7,14 @@
 
 @endsection
 @section('index')
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+  <header>
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
       <a class="navbar-brand mr-auto mr-lg-0" href="#">PCC</a>
-      <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
-        <span class="navbar-toggler-icon"></span>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+      <div class="collapse navbar-collapse offcanvas-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
             <a class="nav-link" href="/">Peminjaman<span class="sr-only">(current)</span></a>
@@ -27,10 +28,11 @@
         
         <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
         </form>
       </div>
     </nav>
+    </header>
     </br>
     </br>
     </br>
@@ -52,24 +54,25 @@
             <span class="badge badge-secondary badge-pill">{{$count}}</span>
             
           </h4>
-          <p class="text-muted d-flex justify-content-between align-items-center mb-2">Peminjaman terakhir</p>
-
           
           <ul class="list-group mb-3">
           @foreach($peminjaman as $data)
             <li class="list-group-item d-flex justify-content-between lh-condensed">
               <div>
-                <h6 class="my-0">{{$data->alat}}</h6>
+                <h6 class="my-0">{{$data->alat}} x {{$data->jumlah}}</h6>
                 <small class="text-muted">{{$data->nama}}</small>
               </div>
-              <span class="text-muted">RP.{{$data->biaya}}</span>
+              <span class="text-muted">Rp.{{$data->biaya}}</span>
             </li>
           @endforeach
             
             
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="list-group-item d-flex justify-content-between" onclick="">
+            <div>
             <span data-feather="more-horizontal"></span>
-
+            </div>
+            <a href="lihatpeminjaman" class="text-muted"><small>Lihat Lainnya</small></a>
+            
               <!-- <strong>$20</strong> -->
             </li>
           </ul>
@@ -155,9 +158,7 @@
                 <select onchange="myFunction(this.value)" class="custom-select d-block w-100" id="alat" name="alat" required>
                 <option value="">Pilih Alat...</option>
                 @foreach($alat as $data)
-                  
                   <option value="{{$data->id}}|{{$data->biaya}}|{{$data->stok}}">{{$data->nama}}</option>
-
                 @endforeach
                 </select>
                 <div class="invalid-feedback">
@@ -173,8 +174,8 @@
               </div>
               <div class="col-md-3 mb-3">
                 <label for="zip">Jumlah</label>
-                <input type="number" class="form-control" id="jumlah" name="jumlah" min="0" placeholder="" required >
-                <div class="invalid-feedback">
+                <input type="number" class="form-control" id="jumlah" name="jumlah" min="1" placeholder="" required >
+                <div id="jumlahfeed" class="invalid-feedback">
                   Qty is required.
                 </div>
               </div>
@@ -185,7 +186,7 @@
                 <label for="cc-name">Stok Tersedia</label>
                 <input type="text" class="form-control" name="stok" id="stok" placeholder="" value="-" readonly>
                 <div class="invalid-feedback">
-                  Dont Override Stok Max Value
+                Lack amount of stock
                 </div>
               </div>
               <div class="col-md-7 mb-3">
@@ -275,13 +276,17 @@
 
           if(stok < jumlah){
               // Ketika jumlah melebihi stok
+              document.getElementById('jumlahfeed').innerHTML="Use less amount than stok!"; 
               $('#stok').addClass('is-invalid');
+              $('#jumlah').removeClass('is-valid').addClass('is-invalid');
               $('#frm').addClass('was-validated');
               event.preventDefault();
               event.stopPropagation();
             
           }else{
+              document.getElementById('jumlahfeed').innerHTML="Qty is required"; 
               $('#stok').removeClass('is-invalid');
+              $('#jumlah').removeClass('is-invalid').addClass('is-isvalid');
           }
         });
     </script>
