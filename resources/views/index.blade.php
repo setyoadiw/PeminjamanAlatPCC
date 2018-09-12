@@ -243,34 +243,43 @@
     <script type="text/javascript" src="{{asset('/datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 
     <script>
+      var biaya =0;
+     $('#jumlah').bind('input', function() { 
+       
+       var jumlah= $(this).val() // get the current value of the input field.
+       var total = jumlah*biaya;
+
+      document.getElementById('biaya').value= total; 
+    });
+    </script>
+
+    <script>
     function myFunction(val) {
         
         var explode = val.split('|');
+        var jumlah = document.getElementById("jumlah").value;
+        biaya = explode[1];
 
-        document.getElementById('biaya').value=explode[1] ; 
+        document.getElementById('biaya').value=biaya ; 
         document.getElementById('stok').value=explode[2] ; 
 
     }
     </script>
 
     <script>
-    
-
      $(document).ready(function () {
                 $('.tanggal').datepicker({
                     format: "dd-mm-yyyy",
                     autoclose:true
                 });
-            });
-
-    // $('.datepicker').datepicker();
+    });
 
     </script>
 
     <script>
         $("#btn").on("click", function(){
 
-          //add
+          //Validasi stok dan jumlah
           var stok = document.getElementById("stok").value;
           var jumlah = document.getElementById("jumlah").value;
 
