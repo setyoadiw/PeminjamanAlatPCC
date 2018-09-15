@@ -110,6 +110,10 @@ class DataAlatController extends Controller
         $peminjaman = $request->peminjaman;
         $ket = $request->ket;
 
+        if(is_null($ket)){
+            $ket = "-";
+        }
+
         $alat = Alat::find($id);
         $alat->nama = $nama;
         $alat->kategori = $kategori;

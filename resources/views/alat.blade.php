@@ -19,7 +19,7 @@
       <div class="collapse navbar-collapse offcanvas-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item ">
-            <a class="nav-link" href="/">Peminjaman</a>
+            <a class="nav-link" href="./">Peminjaman</a>
           </li>
           <li class="nav-item active">
             <a class="nav-link" href="lihatpeminjaman">Lihat Peminjaman<span class="sr-only">(current)</span></a>
@@ -126,7 +126,7 @@
 
                 </div>
                 <div class="modal-body">
-                    <form action="/dataalat/add" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <form action="./dataalat/add" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {{ csrf_field() }}
                     <div class="row">
                         <div class="col-md-5 mb-3">
@@ -199,7 +199,7 @@
 
                 </div>
                 <div class="modal-body">
-                    <form id="myFormEdit" action="/dataalat/" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <form id="myFormEdit" action="./dataalat/" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
                     <div class="row">
@@ -292,30 +292,22 @@
                     <td>{{$data->peminjaman}}</td>
                     <td>{{$data->ket}}</td>
                     <td>
+                    <button data-toggle="modal" data-target="#myModalEdit" 
+                          value="{{$data->id}}|{{$data->nama}}|{{$data->stok}}|{{$data->noinventaris}}|{{$data->biaya}}|{{$data->ket}}" 
+                          type="button" id="edit" class="btn btn-sm btn-outline-secondary"
+                          onclick="@if (Auth::guest())
+                    
+                          window.location='{{ url("/login") }}'
+                          @else
+                          eventclick(this.value)
+                          @endif">
+                          <span data-feather="edit"></span>
+                          Edit
+                        </button>
 
                         <form action="./dataalat/{{$data->id}}" method="post">
                         {{ csrf_field() }}
                         {{ method_field('delete') }}
-
-                        <button onclick="@if (Auth::guest())
-                    
-                          window.location='{{ url("/login") }}'
-                          @else
-
-                          @endif" data-toggle="modal" data-target="#myModalEdit" 
-                          data-id="{{$data->id}}"
-                          data-nama="{{$data->nama}}" 
-                          data-noinventaris="{{$data->noinventaris}}"
-                          data-stok="{{$data->stok}}"
-                          data-biaya="{{$data->biaya}}"
-                          data-peminjaman="{{$data->peminjaman}}"
-                          data-ket="{{$data->ket}}"
-                          data-kategori="{{$data->kategori}}" type="button" id="edit" class="btn btn-sm btn-outline-secondary ">
-                          <span data-feather="edit"></span>
-                          Edit
-                        </button>
-                        
-                        
                         <button type="submit" class="btn btn-sm btn-outline-danger" @if (Auth::guest()) disabled @else @endif >
                         <span data-feather="delete"></span>
                             Delete
@@ -325,9 +317,6 @@
                 </tr>
 
                 @endforeach
-
-
-              
                 
             </tbody>
           </table>
@@ -361,30 +350,24 @@
     </script>
 
     <script>
-      $(document).ready(function() {
+    //get data when button edit click & post to Controller
+      function eventclick(val){
+        
+        var explode ="";
+        explode = val.split('|');
+        data_id=explode[0];
 
-        $("#edit").click(function () {
+        document.getElementById('id').value=explode[0]; 
+        document.getElementById('nama').value=explode[1]; 
+        document.getElementById('stok').value= explode[2]; 
+        document.getElementById('noinventaris').value= explode[3]; 
+        document.getElementById('biaya').value= explode[4]; 
+        document.getElementById('ket').innerHTML=explode[5]; 
 
-          var data_id = $(this).data('id');
-          var data_nama = $(this).data('nama');
-          var data_kategori = $(this).data('kategori');
-          var data_stok = $(this).data('stok');
-          var data_noinventaris = $(this).data('noinventaris');
-          var data_peminjaman = $(this).data('peminjaman');
-          var data_biaya = $(this).data('biaya');
-          var data_ket = $(this).data('ket');
-         
-          document.getElementById('id').value= data_id ; 
-          document.getElementById('nama').value= data_nama ; 
-          document.getElementById('stok').value= data_stok ; 
-          document.getElementById('noinventaris').value= data_noinventaris ; 
-          document.getElementById('biaya').value= data_biaya ; 
-          document.getElementById('ket').innerHTML=data_ket; 
+        $('#myFormEdit').attr('action', './dataalat/'+data_id);
 
-          $('#myFormEdit').attr('action', '/dataalat/'+data_id);
-
-        })
-      });
+      }
+     
     </script>
 
     <script>

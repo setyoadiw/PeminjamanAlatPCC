@@ -19,7 +19,7 @@
       <div class="collapse navbar-collapse offcanvas-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item ">
-            <a class="nav-link" href="/">Peminjaman</a>
+            <a class="nav-link" href="./">Peminjaman</a>
           </li>
           <li class="nav-item active">
             <a class="nav-link" href="lihatpeminjaman">Lihat Peminjaman<span class="sr-only">(current)</span></a>

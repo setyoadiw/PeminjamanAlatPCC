@@ -83,7 +83,7 @@
         <div class="col-md-8 order-md-1">
           
           <h4 class="mb-3">Input Data</h4>
-          <form action="/peminjaman" method="post" enctype="multipart/form-data" class="needs-validation" id="frm" novalidate>
+          <form action="./peminjaman" method="post" enctype="multipart/form-data" class="needs-validation" id="frm" novalidate>
           {{ csrf_field() }}
           <div class="row">
               <div class="col-md-6 mb-3">
