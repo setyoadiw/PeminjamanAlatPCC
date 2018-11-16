@@ -239,7 +239,7 @@
           document.getElementById('jumlah').value= data_jumlah ; 
           document.getElementById('alat').innerHTML=data_alat +" x "+data_jumlah; 
 
-          $('#myFormId').attr('action', '/lihatpeminjaman/'+data_id+"/kembali");
+          $('#myFormId').attr('action', './lihatpeminjaman/'+data_id+"/kembali");
 
         })
       });

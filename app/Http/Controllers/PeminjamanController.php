@@ -101,9 +101,7 @@ class PeminjamanController extends Controller
         
         $alat = Alat::where('id', $idalat)->first();
         $stok = $alat->stok;
-        
         $alat->stok = $stok - $jumlah;
-        $alat->save();
 
         if(is_null($email)){
             $email = "-";
@@ -121,9 +119,16 @@ class PeminjamanController extends Controller
         $peminjaman->biaya = $biaya;
         $peminjaman->staff = $staff;
         $peminjaman->kembali = 0;
-        $peminjaman->save();
+
+        if($stok > $jumlah){
+            $peminjaman->save();
+            $alat->save();
+            
+            return redirect()->action('PeminjamanController@index');
+        }else{
+            return redirect()->action('PeminjamanController@index')->with('update', 'Stok tidak mencukupi !');
+        }
         
-        return redirect()->action('PeminjamanController@index');
 
     }
 

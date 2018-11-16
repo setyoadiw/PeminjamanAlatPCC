@@ -81,7 +81,12 @@
 
 
         <div class="col-md-8 order-md-1">
-          
+          @if (session('update'))
+          <div class="alert alert-danger alert-dismissable custom-success-box" style="margin: 15px;">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong> {{ session('update') }} </strong> Periksa kembali jumlah peminjaman anda!
+          </div>
+          @endif
           <h4 class="mb-3">Input Data</h4>
           <form action="./peminjaman" method="post" enctype="multipart/form-data" class="needs-validation" id="frm" novalidate>
           {{ csrf_field() }}
@@ -283,20 +288,20 @@
           var stok = document.getElementById("stok").value;
           var jumlah = document.getElementById("jumlah").value;
 
-          if(stok < jumlah){
-              // Ketika jumlah melebihi stok
-              document.getElementById('jumlahfeed').innerHTML="Use less amount than stok!"; 
-              $('#stok').addClass('is-invalid');
-              $('#jumlah').removeClass('is-valid').addClass('is-invalid');
-              $('#frm').addClass('was-validated');
-              event.preventDefault();
-              event.stopPropagation();
+          // if(stok < jumlah){
+          //     // Ketika jumlah melebihi stok
+          //     document.getElementById('jumlahfeed').innerHTML="Use less amount than stok!"; 
+          //     $('#stok').addClass('is-invalid');
+          //     $('#jumlah').removeClass('is-valid').addClass('is-invalid');
+          //     $('#frm').addClass('was-validated');
+          //     event.preventDefault();
+          //     event.stopPropagation();
             
-          }else{
-              document.getElementById('jumlahfeed').innerHTML="Qty is required"; 
-              $('#stok').removeClass('is-invalid');
-              $('#jumlah').removeClass('is-invalid').addClass('is-isvalid');
-          }
+          // }else{
+          //     document.getElementById('jumlahfeed').innerHTML="Qty is required"; 
+          //     $('#stok').removeClass('is-invalid');
+          //     $('#jumlah').removeClass('is-invalid').addClass('is-isvalid');
+          // }
         });
     </script>
 
